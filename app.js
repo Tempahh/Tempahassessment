@@ -22,9 +22,8 @@ const server = createServer({
 });
 
 const ENDPOINT_CONFIGS = [
-  {
-    path: './endpoints/onboarding/',
-  },
+  { path: './endpoints/handlepayment/' },
+  { path: './endpoints/onboarding/' },
 ];
 
 function logEndpointMetaData(endpointConfigs) {

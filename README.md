@@ -95,7 +95,7 @@ async function parseInstruction(serviceData, options = {}) {
       currency: 'USD',
       debit_account: 'a',
       credit_account: 'b',
-      execute_by: null,
+      executeBy: null,
       status: 'successful',
       status_reason: 'Transaction executed successfully',
       status_code: 'AP00',
