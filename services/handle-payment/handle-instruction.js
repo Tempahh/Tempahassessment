@@ -4,7 +4,7 @@ const { throwAppError } = require('@app-core/errors');
 const { TRANSACTION_STATUS_CODE_MAPPING } = require('@app-core/errors/constants');
 const PaymentMessages = require('../../messages/payment');
 const { mapValidationErrors } = require('../../helpers/error-mapping');
-const parseInstruction = require('../../helpers/parse-instruction');
+const { parseInstruction } = require('../../helpers/parse-instruction');
 
 // Payment instruction spec
 const paymentInstructionSpec = `
