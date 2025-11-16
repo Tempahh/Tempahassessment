@@ -161,6 +161,7 @@ async function handlePaymentInstruction(body) {
     status_code: TRANSACTION_STATUS_CODE_MAPPING.TRANSACTION_SUCCESSFUL,
     accounts: [updatedDebit, updatedCredit],
   };
+  appLogger.info(response);
   return response;
 }
 
