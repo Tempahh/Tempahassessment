@@ -1,5 +1,6 @@
 const { TRANSACTION_STATUS_CODE_MAPPING } = require('@app-core/errors/constants');
 const { throwAppError } = require('@app-core/errors');
+const { appLogger } = require('@app-core/logger');
 const PaymentMessages = require('../messages/payment');
 
 /**
@@ -12,6 +13,7 @@ function parseInstruction(instruction) {
   const upperWords = words.map((w) => w.toUpperCase());
 
   if (!['DEBIT', 'CREDIT'].includes(upperWords[0])) {
+    appLogger.error(`Malformed instruction: ${instruction}`);
     throwAppError(
       PaymentMessages.MALFORMED_INSTRUCTION,
       TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
@@ -23,6 +25,7 @@ function parseInstruction(instruction) {
   const currency = upperWords[2];
 
   if (Number.isNaN(amount) || amount <= 0 || !Number.isInteger(amount)) {
+    appLogger.error(`Invalid amount in instruction: ${instruction}`);
     throwAppError(
       PaymentMessages.POSITIVE_INT_ERROR,
       TRANSACTION_STATUS_CODE_MAPPING.POSITIVE_INT_ERROR
@@ -30,6 +33,7 @@ function parseInstruction(instruction) {
   }
 
   if (!['USD', 'NGN', 'GBP', 'GHS'].includes(currency)) {
+    appLogger.error(`Unsupported currency in instruction: ${instruction}`);
     throwAppError(
       PaymentMessages.UNSUPPORTED_CURRENCY,
       TRANSACTION_STATUS_CODE_MAPPING.UNSUPPORTED_CURRENCY
@@ -61,6 +65,7 @@ function parseInstruction(instruction) {
   }
 
   if (!fromAccount || !toAccount) {
+    appLogger.error(`Invalid account format in instruction: ${instruction}`);
     throwAppError(
       PaymentMessages.INVALID_INSTRUCTION_FORMAT,
       TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
@@ -68,6 +73,7 @@ function parseInstruction(instruction) {
   }
 
   if (fromAccount === toAccount) {
+    appLogger.error(`Same account error in instruction: ${instruction}`);
     throwAppError(
       PaymentMessages.SAME_ACCOUNT_ERROR,
       TRANSACTION_STATUS_CODE_MAPPING.SAME_ACCOUNT_ERROR
@@ -87,6 +93,7 @@ function parseInstruction(instruction) {
       utcDate.getUTCMonth() + 1 !== m ||
       utcDate.getUTCDate() !== d
     ) {
+      appLogger.error(`Invalid date format in instruction: ${instruction}`);
       throwAppError(
         PaymentMessages.INVALID_DATE_FORMAT,
         TRANSACTION_STATUS_CODE_MAPPING.INVALID_DATE_FORMAT
@@ -104,6 +111,7 @@ function parseInstruction(instruction) {
     credit_account: toAccount,
     executeBy,
   };
+  appLogger.info(`Parsed instruction: ${JSON.stringify(response)}`);
   return response;
 }
 

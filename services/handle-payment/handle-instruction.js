@@ -55,6 +55,7 @@ async function handlePaymentInstruction(body) {
       status_code: 'SY03',
       accounts: [],
     };
+    appLogger.error(response);
     return response;
   }
 
@@ -76,6 +77,7 @@ async function handlePaymentInstruction(body) {
       status_code: TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION,
       accounts: [],
     };
+    appLogger.error(response);
     return response;
   }
 
@@ -93,6 +95,7 @@ async function handlePaymentInstruction(body) {
         status_code: TRANSACTION_STATUS_CODE_MAPPING.TRANSACTION_PENDING,
         accounts: [],
       };
+      appLogger.info(response);
       return response;
     }
   }
@@ -111,6 +114,7 @@ async function handlePaymentInstruction(body) {
         [parsed.debit_account, parsed.credit_account].includes(a.id)
       ),
     };
+    appLogger.error(response);
     return response;
   }
 
@@ -126,6 +130,7 @@ async function handlePaymentInstruction(body) {
       status_code: TRANSACTION_STATUS_CODE_MAPPING.CURRENCY_MISMATCH,
       accounts: [debitAcc, creditAcc],
     };
+    appLogger.error(response);
     return response;
   }
 
@@ -138,6 +143,7 @@ async function handlePaymentInstruction(body) {
       status_code: TRANSACTION_STATUS_CODE_MAPPING.INSUFFICIENT_FUNDS,
       accounts: [debitAcc, creditAcc],
     };
+    appLogger.error(response);
     return response;
   }
 
