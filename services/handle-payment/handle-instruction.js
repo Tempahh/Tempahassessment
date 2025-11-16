@@ -17,12 +17,11 @@ root {
 `;
 
 const parsedSpec = validator.parse(paymentInstructionSpec);
+appLogger.info(parsedSpec);
 
 function mapValidationErrors(errors = []) {
-  return errors.map((err) => {
-    const mapped = PaymentMessages[err.code];
-    return `${mapped} -> Field: ${err.path}`;
-  });
+  if (!errors.length) return null;
+  return errors[0].message; // return only the first message
 }
 
 /**
@@ -125,7 +124,7 @@ async function handlePaymentInstruction(body) {
 
   if (result.error) {
     const readable = mapValidationErrors(result.error);
-    throwAppError(readable.join('; '), ERROR_CODE.INVLDDATA);
+    throwAppError(readable.join('; '));
   }
 
   appLogger.info(result);

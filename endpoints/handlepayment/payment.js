@@ -8,7 +8,6 @@ module.exports = createHandler({
   async handler(requestContext, helpers) {
     try {
       const requestBody = requestContext.body;
-      requestBody.requestMeta = requestContext.properties;
 
       const parsedResponse = await reqlineParseService(requestBody);
       return {
