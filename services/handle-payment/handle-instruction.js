@@ -1,8 +1,10 @@
 const validator = require('@app-core/validator');
 const { appLogger } = require('@app-core/logger');
-const { throwAppError, ERROR_CODE } = require('@app-core/errors');
+const { throwAppError } = require('@app-core/errors');
 const { TRANSACTION_STATUS_CODE_MAPPING } = require('@app-core/errors/constants');
 const PaymentMessages = require('../../messages/payment');
+const { mapValidationErrors } = require('../../helpers/error-mapping');
+const parseInstruction = require('../../helpers/parse-instruction');
 
 // Payment instruction spec
 const paymentInstructionSpec = `
@@ -18,99 +20,6 @@ root {
 
 const parsedSpec = validator.parse(paymentInstructionSpec);
 appLogger.info(parsedSpec);
-
-function mapValidationErrors(errors = []) {
-  if (!errors.length) return null;
-  return errors[0].message; // return only the first message
-}
-
-/**
- * Parses payment instruction into structured data
- */
-function parseInstruction(instruction) {
-  let response = {};
-
-  const words = instruction.trim().split(/\s+/);
-  const upperWords = words.map((w) => w.toUpperCase());
-
-  if (!['DEBIT', 'CREDIT'].includes(upperWords[0])) {
-    throwAppError(
-      PaymentMessages.MALFORMED_INSTRUCTION,
-      TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
-    );
-  }
-
-  const type = upperWords[0];
-  const amount = Number(words[1]);
-  const currency = upperWords[2];
-
-  if (Number.isNaN(amount) || amount <= 0 || !Number.isInteger(amount)) {
-    throwAppError(
-      PaymentMessages.POSITIVE_INT_ERROR,
-      TRANSACTION_STATUS_CODE_MAPPING.POSITIVE_INT_ERROR
-    );
-  }
-
-  if (!['USD', 'NGN', 'GBP', 'GHS'].includes(currency)) {
-    throwAppError(
-      PaymentMessages.UNSUPPORTED_CURRENCY,
-      TRANSACTION_STATUS_CODE_MAPPING.UNSUPPORTED_CURRENCY
-    );
-  }
-
-  // FROM and TO accounts
-  const fromIdx = upperWords.indexOf('FROM');
-  const toIdx = upperWords.indexOf('TO');
-
-  const fromAccount = fromIdx !== -1 ? words[fromIdx + 2] : null;
-  const toAccount = toIdx !== -1 ? words[toIdx + 2] : null;
-
-  if (!fromAccount || !toAccount) {
-    throwAppError(
-      PaymentMessages.INVALID_INSTRUCTION_FORMAT,
-      TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
-    );
-  }
-
-  if (fromAccount === toAccount) {
-    throwAppError(
-      PaymentMessages.SAME_ACCOUNT_ERROR,
-      TRANSACTION_STATUS_CODE_MAPPING.SAME_ACCOUNT_ERROR
-    );
-  }
-
-  // Optional ON date
-  let executeBy = null;
-  const onIdx = upperWords.indexOf('ON');
-  if (onIdx !== -1) {
-    const date = words[onIdx + 1];
-    const [y, m, d] = date.split('-').map(Number);
-    const utcDate = new Date(Date.UTC(y, m - 1, d));
-
-    if (
-      utcDate.getUTCFullYear() !== y ||
-      utcDate.getUTCMonth() + 1 !== m ||
-      utcDate.getUTCDate() !== d
-    ) {
-      throwAppError(
-        PaymentMessages.INVALID_DATE_FORMAT,
-        TRANSACTION_STATUS_CODE_MAPPING.INVALID_DATE_FORMAT
-      );
-    }
-
-    executeBy = date;
-  }
-
-  response = {
-    type,
-    amount,
-    currency,
-    debit_account: fromAccount,
-    credit_account: toAccount,
-    executeBy,
-  };
-  return response;
-}
 
 /**
  * Handles a payment instruction request
