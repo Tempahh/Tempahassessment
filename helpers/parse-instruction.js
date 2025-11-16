@@ -43,6 +43,19 @@ function parseInstruction(instruction) {
   // FROM and TO accounts
   const fromIdx = upperWords.indexOf('FROM');
   const toIdx = upperWords.indexOf('TO');
+
+  // confirm that from comes before to in debit instruction and vice versa for credit
+  if (
+    (type === 'DEBIT' && (fromIdx === -1 || toIdx === -1 || fromIdx > toIdx)) ||
+    (type === 'CREDIT' && (toIdx === -1 || fromIdx === -1 || toIdx > fromIdx))
+  ) {
+    appLogger.error(`Malformed instruction: ${instruction}`);
+    throwAppError(
+      PaymentMessages.MALFORMED_INSTRUCTION,
+      TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
+    );
+  }
+
   let fromAccount = null;
   let toAccount = null;
 
