@@ -77,6 +77,26 @@ function parseInstruction(instruction) {
     }
   }
 
+  // check for allowed account formats without regex for simplicity
+  const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.';
+  const isValidAccount = (account) =>
+    [...account].every((char) => allowedCharacters.includes(char));
+
+  if (fromAccount && !isValidAccount(fromAccount)) {
+    appLogger.error(`Invalid account format in instruction: ${instruction}`);
+    throwAppError(
+      PaymentMessages.INVALID_INSTRUCTION_FORMAT,
+      TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
+    );
+  }
+  if (toAccount && !isValidAccount(toAccount)) {
+    appLogger.error(`Invalid account format in instruction: ${instruction}`);
+    throwAppError(
+      PaymentMessages.INVALID_INSTRUCTION_FORMAT,
+      TRANSACTION_STATUS_CODE_MAPPING.MALFORMED_INSTRUCTION
+    );
+  }
+
   if (!fromAccount || !toAccount) {
     appLogger.error(`Invalid account format in instruction: ${instruction}`);
     throwAppError(
