@@ -13,6 +13,7 @@ const PaymentMessages = {
   TRANSACTION_SUCCESSFUL: 'Transaction executed successfully',
   TRANSACTION_PENDING: 'Transaction scheduled for future execution',
   POSITIVE_INT_ERROR: 'Amount must be a positive integer',
+  INVALID_INSTRUCTION_FORMAT: 'Invalid instruction format',
 };
 
 module.exports = PaymentMessages;
