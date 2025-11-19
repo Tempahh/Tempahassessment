@@ -1,7 +1,7 @@
 const { TRANSACTION_STATUS_CODE_MAPPING } = require('@app-core/errors/constants');
 const { throwAppError } = require('@app-core/errors');
 const { appLogger } = require('@app-core/logger');
-const PaymentMessages = require('../messages/payment');
+const PaymentMessages = require('@app/messages/payment');
 
 /**
  * Parses payment instruction into structured data
@@ -148,4 +148,4 @@ function parseInstruction(instruction) {
   return response;
 }
 
-module.exports = { parseInstruction };
+module.exports = parseInstruction;

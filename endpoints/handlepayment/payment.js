@@ -1,6 +1,6 @@
 const { createHandler } = require('@app-core/server');
 const { ERROR_CODE } = require('@app-core/errors');
-const reqlineParseService = require('../../services/handle-payment/handle-instruction');
+const reqlineParseService = require('@app/services/handle-payment/handle-instruction');
 
 module.exports = createHandler({
   path: '/payment-instructions',

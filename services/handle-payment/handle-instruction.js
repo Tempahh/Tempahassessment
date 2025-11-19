@@ -2,9 +2,9 @@ const validator = require('@app-core/validator');
 const { appLogger } = require('@app-core/logger');
 const { throwAppError } = require('@app-core/errors');
 const { TRANSACTION_STATUS_CODE_MAPPING } = require('@app-core/errors/constants');
-const PaymentMessages = require('../../messages/payment');
-const { mapValidationErrors } = require('../../helpers/error-mapping');
-const { parseInstruction } = require('../../helpers/parse-instruction');
+const PaymentMessages = require('@app/messages/payment');
+const mapValidationErrors = require('@app/services/utils/error-mapping');
+const parseInstruction = require('@app/services/utils/parse-instruction');
 
 // Payment instruction spec
 const paymentInstructionSpec = `
