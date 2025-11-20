@@ -78,7 +78,7 @@ function parseInstruction(instruction) {
   }
 
   // check for allowed account formats without regex for simplicity
-  const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.';
+  const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.@';
   const isValidAccount = (account) =>
     [...account].every((char) => allowedCharacters.includes(char));
 
